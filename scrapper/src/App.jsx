@@ -168,10 +168,10 @@ function App() {
     <div className="dashboard">
       <header className="header">
         <div className="header-main">
-          <h1>Lead Explorer <span className="version-badge">v2.0</span></h1>
+          <h1>Lead Explorer <span className="version-badge">2.0</span></h1>
           <p className="stats">
-            <strong>{leadsData.length}</strong> Total Leads | 
-            <strong> {filteredLeads.length}</strong> Filtered
+            <strong>{leadsData.length}</strong> Total | 
+            <strong> {filteredLeads.length}</strong> Results
           </p>
         </div>
 
@@ -226,7 +226,7 @@ function App() {
                 onClick={startScraper}
                 disabled={scrapingStatus !== 'idle' && scrapingStatus !== 'finished'}
               >
-                {scrapingStatus === 'idle' || scrapingStatus === 'finished' ? '🚀 Start Extraction' : '⚡ Scanning...'}
+                {scrapingStatus === 'idle' || scrapingStatus === 'finished' ? 'Start Extraction' : 'Scanning...'}
               </button>
             </div>
           </div>
@@ -237,7 +237,7 @@ function App() {
                 <span className={`status-dot ${scrapingStatus}`}></span>
                 <span className="status-text">{scrapingStatus.replace(/_/g, ' ')}</span>
                 {scrapingStatus === 'waiting_for_user' && (
-                  <button className="pulse-confirm-btn" onClick={confirmZone}>I'm in position, Start Scan! ✅</button>
+                  <button className="pulse-confirm-btn" onClick={confirmZone}>Confirm Position</button>
                 )}
               </div>
               <div className="terminal-logs">
@@ -251,20 +251,19 @@ function App() {
           <div className="search-box">
             <input 
               type="text" 
-              placeholder="Filter by name, address or keyword..." 
+              placeholder="Search leads..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
-            <span className="search-icon">🔍</span>
           </div>
           <div className="filter-group">
             <label className={`toggle-pill ${filterSocial ? 'active' : ''}`}>
               <input type="checkbox" checked={filterSocial} onChange={(e) => setFilterSocial(e.target.checked)} />
-              Missing Website Only
+              No Website
             </label>
             <label className={`toggle-pill accent ${priorityMode ? 'active' : ''}`}>
               <input type="checkbox" checked={priorityMode} onChange={(e) => setPriorityMode(e.target.checked)} />
-              🔥 High Potential First
+              High Potential
             </label>
           </div>
         </div>
@@ -276,30 +275,29 @@ function App() {
             <div className="card-header">
               <h3>{lead.Name}</h3>
               <div className="rating-box">
-                <span className="rating">⭐ {lead.Rating !== "0" ? lead.Rating : "N/A"}</span>
+                <span className="rating">{lead.Rating !== "0" ? lead.Rating : "N/A"}</span>
                 <span className="reviews">({lead.Reviews} reviews)</span>
               </div>
             </div>
             
             <div className="card-body">
-              <div className="info-row">
-                <span className="icon">📍</span>
-                <span>{lead.Address}</span>
+              <div className="contact-island">
+                <div className="info-row">
+                  <span>{lead.Address}</span>
+                </div>
+                
+                {lead.Phone !== "N/A" && (
+                  <div className="info-row">
+                    <span>{lead.Phone}</span>
+                  </div>
+                )}
+                
+                {lead.Email !== "N/A" && (
+                  <div className="info-row">
+                    <span>{lead.Email}</span>
+                  </div>
+                )}
               </div>
-              
-              {lead.Phone !== "N/A" && (
-                <div className="info-row">
-                  <span className="icon">📞</span>
-                  <span>{lead.Phone}</span>
-                </div>
-              )}
-              
-              {lead.Email !== "N/A" && (
-                <div className="info-row">
-                  <span className="icon">📧</span>
-                  <span>{lead.Email}</span>
-                </div>
-              )}
             </div>
 
             <div className="card-footer">
