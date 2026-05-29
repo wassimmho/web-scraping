@@ -7,8 +7,28 @@ from datetime import datetime
 from playwright.async_api import async_playwright
 import pandas as pd
 
-async def scrape_google_maps():
-    print("--- Google Maps Scraper Setup ---")
+class ScrapeProgress:
+    """Helper to store logs for the web interface"""
+    def __init__(self):
+        self.logs = []
+        self.status = "idle" # idle, running, waiting_for_user, finished
+        self.total_leads = 0
+
+    def log(self, message):
+        timestamp = datetime.now().strftime("%H:%M:%S")
+        full_msg = f"[{timestamp}] {message}"
+        self.logs.append(full_msg)
+        print(message)
+
+progress = ScrapeProgress()
+
+async def scrape_google_maps(config=None, p_manager=None):
+    global progress
+    if p_manager:
+        progress = p_manager
+    
+    progress.status = "running"
+    progress.log("--- Google Maps Scraper Started ---")
     
     # Predefined categories for easier selection
     categories = {
@@ -19,56 +39,70 @@ async def scrape_google_maps():
         "Hospitality": ["Restaurant", "Hôtel", "Café", "Pâtisserie"]
     }
     
-    print("\nSelect a business category:")
-    flat_categories = []
-    idx = 1
-    for group, cats in categories.items():
-        print(f"\n--- {group} ---")
-        for cat in cats:
-            print(f"{idx}. {cat}")
-            flat_categories.append(cat)
-            idx += 1
-    
-    print(f"\n{idx}. Other (Enter manually)")
-    
-    choice = input(f"\nEnter choice (1-{idx}): ")
-    try:
-        choice_idx = int(choice)
-        if 1 <= choice_idx <= len(flat_categories):
-            business_type = flat_categories[choice_idx - 1]
+    if not config:
+        # TTY Interaction (Manual run)
+        print("\nSelect a business category:")
+        flat_categories = []
+        idx = 1
+        for group, cats in categories.items():
+            print(f"\n--- {group} ---")
+            for cat in cats:
+                print(f"{idx}. {cat}")
+                flat_categories.append(cat)
+                idx += 1
+        
+        print(f"\n{idx}. Other (Enter manually)")
+        
+        choice = input(f"\nEnter choice (1-{idx}): ")
+        try:
+            choice_idx = int(choice)
+            if 1 <= choice_idx <= len(flat_categories):
+                business_type = flat_categories[choice_idx - 1]
+            else:
+                business_type = input("Enter custom business type: ")
+        except ValueError:
+            business_type = choice if choice.strip() else "Business"
+
+        print("\n--- Selection Mode ---")
+        print("1. Text Search (City, Country, Zones)")
+        print("2. Visual Map Selection (Choose area on a live map)")
+        mode_choice = input("Select mode (1 or 2): ")
+
+        search_queries = []
+        visual_mode = False
+
+        if mode_choice == "2":
+            visual_mode = True
+            print("\n[Visual Mode] Starting browser... Follow the instructions to select your area.")
         else:
-            business_type = input("Enter custom business type: ")
-    except ValueError:
-        business_type = choice if choice.strip() else "Business"
-
-    print("\n--- Selection Mode ---")
-    print("1. Text Search (City, Country, Zones)")
-    print("2. Visual Map Selection (Choose area on a live map)")
-    mode_choice = input("Select mode (1 or 2): ")
-
-    search_queries = []
-    visual_mode = False
-
-    if mode_choice == "2":
-        visual_mode = True
-        print("\n[Visual Mode] Starting browser... Follow the instructions to select your area.")
+            city = input("Enter city: ")
+            state = input("Enter state/province (optional, press Enter to skip): ")
+            country = input("Enter country: ")
+            
+            zones = input("Enter specific zones/neighborhoods (optional, separate with commas): ")
+            
+            location_base = f"{city}"
+            if state: location_base += f", {state}"
+            location_base += f", {country}"
+            
+            if zones:
+                zone_list = [z.strip() for z in zones.split(',')]
+                for zone in zone_list:
+                    search_queries.append(f"{business_type} in {zone}, {location_base}")
+            else:
+                search_queries.append(f"{business_type} in {location_base}")
     else:
-        city = input("Enter city: ")
-        state = input("Enter state/province (optional, press Enter to skip): ")
-        country = input("Enter country: ")
+        # Web Interaction (Server triggered)
+        business_type = config.get("business_type", "Business")
+        visual_mode = config.get("visual_mode", False)
+        search_queries = config.get("search_queries", [])
         
-        zones = input("Enter specific zones/neighborhoods (optional, separate with commas): ")
-        
-        location_base = f"{city}"
-        if state: location_base += f", {state}"
-        location_base += f", {country}"
-        
-        if zones:
-            zone_list = [z.strip() for z in zones.split(',')]
-            for zone in zone_list:
-                search_queries.append(f"{business_type} in {zone}, {location_base}")
-        else:
-            search_queries.append(f"{business_type} in {location_base}")
+        if not visual_mode and not search_queries:
+            # Reconstruct from direct fields if queries not pre-built
+            city = config.get("city", "")
+            country = config.get("country", "")
+            location = f"{city}, {country}"
+            search_queries = [f"{business_type} in {location}"]
     
     async with async_playwright() as p:
         user_agents = [
@@ -85,9 +119,7 @@ async def scrape_google_maps():
         seen_names = set()
 
         if visual_mode:
-            print("\n>>> INSTRUCTIONS:")
-            print("1. In the browser that just opened, move and ZOOM into the exact area you want.")
-            print("2. Once you are looking at the right area, come back here and press ENTER.")
+            progress.log(">>> [Visual Mode] Browser opened. Zoom into your target area.")
             await page.goto("https://www.google.com/maps")
             
             # Consent
@@ -97,7 +129,17 @@ async def scrape_google_maps():
                     await consent_btn.first.click()
             except: pass
             
-            input("\n>>> [ACTION REQUIRED] Press ENTER here after you have zoomed into your target area...")
+            if not config:
+                input("\n>>> [ACTION REQUIRED] Press ENTER here after you have zoomed into your target area...")
+            else:
+                progress.status = "waiting_for_user"
+                progress.log(">>> [ACTION REQUIRED] Please look at the browser window, zoom into your target area, then click 'Confirm Zone' in the dashboard! ✅")
+                # Wait for user confirmation from web app
+                while progress.status == "waiting_for_user":
+                    await asyncio.sleep(1)
+            
+            progress.status = "running"
+            progress.log("Zone confirmed. Searching for businesses in current view...")
             
             # Now we trigger the search in the current view
             search_box_selector = 'input#searchboxinput'
@@ -109,6 +151,16 @@ async def scrape_google_maps():
             await page.fill(search_box_selector, business_type)
             await page.keyboard.press("Enter")
             await asyncio.sleep(5)
+
+            # Extra check for the "Search this area" button which often appears in visual mode
+            try:
+                search_area_btn = page.locator('button:has-text("Search this area"), button:has-text("Rechercher dans cette zone")')
+                if await search_area_btn.count() > 0:
+                    await search_area_btn.first.click()
+                    progress.log("Clicking 'Search this area' to refresh results...")
+                    await asyncio.sleep(4)
+            except: pass
+
             # Add to list for processing loop
             search_queries = ["VISUAL_CURRENT_VIEW"] 
 
@@ -192,7 +244,15 @@ async def scrape_google_maps():
             for index, card in enumerate(business_cards):
                 try:
                     # Get basic info from card first
-                    name_loc = card.locator('.fontHeadlineSmall')
+                    # Fix: Use a more specific class 'qBF1Pd' to avoid strict mode violations 
+                    # with price labels that also use 'fontHeadlineSmall'
+                    name_loc = card.locator('.qBF1Pd.fontHeadlineSmall')
+                    if await name_loc.count() == 0:
+                        # Fallback to general but check count to avoid strict error
+                        name_loc = card.locator('.fontHeadlineSmall')
+                        if await name_loc.count() > 1:
+                            name_loc = name_loc.first
+                    
                     if await name_loc.count() == 0: continue
                     name = await name_loc.inner_text()
                     
@@ -355,14 +415,15 @@ async def scrape_google_maps():
         try:
             react_data_path = os.path.join("..", "scrapper", "src", "leads.json")
             shutil.copy(json_file, react_data_path)
-            print(f"Updated React website data at {react_data_path}")
+            progress.log(f"Updated React website data at {react_data_path}")
         except Exception as e:
-            print(f"Note: Could not sync to React app folder: {e}")
+            progress.log(f"Note: Could not sync to React app folder: {e}")
 
-        print(f"\nDone! Added {new_count} new leads to {json_file}")
-        print(f"Total leads now: {len(all_leads)}")
+        progress.log(f"\nDone! Added {new_count} new leads.")
     else:
-        print("\nNo new leads found.")
+        progress.log("\nNo new leads found.")
+    
+    progress.status = "finished"
 
 if __name__ == "__main__":
     try:
