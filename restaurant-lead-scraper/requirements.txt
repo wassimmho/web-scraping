@@ -1,0 +1,4 @@
+pydantic
+python-dotenv
+# instagrapi  # Example IG library
+requests
