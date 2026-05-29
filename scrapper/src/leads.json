@@ -293,5 +293,37 @@
         "Website": "N/A",
         "Google Maps Link": "https://www.google.com/maps/place/Padi+D'NYC/@40.762969,-74.0563178,13z/data=!3m1!5s0x89c258555500dd83:0xbe0a01158af98882!4m11!1m3!2m2!1sRestaurant+in+Manhattan,+New+york,+NY,+USA!6e5!3m6!1s0x89c259b573cc8871:0xb6d59a0903f88e5d!8m2!3d40.7608856!4d-73.9825548!15sCipSZXN0YXVyYW50IGluIE1hbmhhdHRhbiwgTmV3IHlvcmssIE5ZLCBVU0FaKSIncmVzdGF1cmFudCBpbiBtYW5oYXR0YW4gbmV3IHlvcmsgbnkgdXNhkgEMaGF3a2VyX3N0YWxsmgEkQ2hkRFNVaE5NRzluUzBWSlEwRm5TVVJxYVhReWJEQm5SUkFC4AEA-gEECAAQNg!16s%2Fg%2F11tf4q75d5?entry=ttu&g_ep=EgoyMDI2MDUyNi4wIKXMDSoASAFQAw%3D%3D",
         "Has Real Website": "No"
+    },
+    {
+        "Name": "Gram Bangla Restaurant { গ্রাম বাংলা }",
+        "Address": " C. de Caravaca, 12, Centro, Centro, Centro, Centro, 28012 Madrid, Espagne",
+        "Phone": " +34 651 66 32 31",
+        "Email": "N/A",
+        "Rating": "4.6",
+        "Reviews": "4",
+        "Comments": [
+            "C’est quoi ce poulet !  Le tikka massala m’a fait pleurer c’était délicieux. …",
+            "Meilleur restaurant indien que je connaisse",
+            "Le biryani au bœuf ressemblait plus à un pulao, car il manquait de saveur.  La portion était généreuse et accompagnée d'une salade de concombres, de salade …"
+        ],
+        "Website": "https://www.facebook.com/profile.php?id=61563752384442",
+        "Google Maps Link": "https://www.google.com/maps/place/Gram+Bangla+Restaurant+%7B+%E0%A6%97%E0%A7%8D%E0%A6%B0%E0%A6%BE%E0%A6%AE+%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE+%7D/@40.42535,-3.8472646,12z/data=!3m1!5s0xd4227d4b56abd7f:0xc43b79394b4b3194!4m11!1m3!2m2!1sRestaurant!6e5!3m6!1s0xd4227006a569aef:0xff6c7fd574f16d29!8m2!3d40.4088935!4d-3.7030323!15sCgpSZXN0YXVyYW50WgwiCnJlc3RhdXJhbnSSARBoYWxhbF9yZXN0YXVyYW50mgFEQ2k5RFFVbFJRVU52WkVOb2RIbGpSamx2VDI1a1IxSlhkRE5rYlVreVdETkpNMk5JUlRKV1JrWllURmhTV1ZkR1JSQULgAQD6AQQIABAr!16s%2Fg%2F11w7ph_79b?entry=ttu&g_ep=EgoyMDI2MDUyNi4wIKXMDSoASAFQAw%3D%3D",
+        "Has Real Website": "No"
+    },
+    {
+        "Name": "Rice",
+        "Address": " C/ de Hortaleza, 47, Centro, 28004 Madrid, Espagne",
+        "Phone": " +34 914 45 41 25",
+        "Email": "N/A",
+        "Rating": "4.6",
+        "Reviews": "4",
+        "Comments": [
+            "Excellent rapport qualité/prix ! Le plat n°2 (riz avec porc aigre-doux) était délicieux et bien servi. Service rapide et agréable, je recommande 💕 …",
+            "Un ami m'a conseillé ce street food j'ai testé les nouilles au canard c'était assez bon, accommodé au goût espagnol donc sucré.... Mais comparé à d'autres établissements de même type il sort du lot",
+            "Les nouilles sont bonnes mais évitez les entrées comme les nems c'est pas top"
+        ],
+        "Website": "N/A",
+        "Google Maps Link": "https://www.google.com/maps/place/Rice/@40.4169426,-3.8407853,12z/data=!4m11!1m3!2m2!1sRestaurant!6e5!3m6!1s0xd422886223164c7:0x38f90e651369c41!8m2!3d40.422836!4d-3.6993036!15sCgpSZXN0YXVyYW50WgwiCnJlc3RhdXJhbnSSAQpyZXN0YXVyYW50mgFEQ2k5RFFVbFJRVU52WkVOb2RIbGpSamx2VDI1YWNsZ3dOV2xqVjA1dVlrVjRRbFJGUlRKUFIzaHNWMWRLZUZadVl4QULgAQD6AQQIIRBF!16s%2Fg%2F11clwm1zz8?entry=ttu&g_ep=EgoyMDI2MDUyNi4wIKXMDSoASAFQAw%3D%3D",
+        "Has Real Website": "No"
     }
 ]
