@@ -325,5 +325,48 @@
         "Website": "N/A",
         "Google Maps Link": "https://www.google.com/maps/place/Rice/@40.4169426,-3.8407853,12z/data=!4m11!1m3!2m2!1sRestaurant!6e5!3m6!1s0xd422886223164c7:0x38f90e651369c41!8m2!3d40.422836!4d-3.6993036!15sCgpSZXN0YXVyYW50WgwiCnJlc3RhdXJhbnSSAQpyZXN0YXVyYW50mgFEQ2k5RFFVbFJRVU52WkVOb2RIbGpSamx2VDI1YWNsZ3dOV2xqVjA1dVlrVjRRbFJGUlRKUFIzaHNWMWRLZUZadVl4QULgAQD6AQQIIRBF!16s%2Fg%2F11clwm1zz8?entry=ttu&g_ep=EgoyMDI2MDUyNi4wIKXMDSoASAFQAw%3D%3D",
         "Has Real Website": "No"
+    },
+    {
+        "Name": "M Plug",
+        "Address": " A, Douera 16046",
+        "Phone": " 0791 64 28 15",
+        "Email": "N/A",
+        "Rating": "4.8",
+        "Reviews": "4",
+        "Comments": [
+            "Un vrai professionnel, merci et bonne continuation.",
+            "Service professionnel et transactions fiables... Bonne chance !"
+        ],
+        "Website": "https://www.facebook.com/profile.php?id=100093098936657",
+        "Google Maps Link": "https://www.google.com/maps/place/M+Plug/@36.7164193,2.5612843,11z/data=!4m10!1m2!2m1!1sAgence+Web!3m6!1s0x128faf6bdcd91dd1:0x57d62277aed17536!8m2!3d36.6874633!4d2.9490669!15sCgpBZ2VuY2UgV2ViWgwiCmFnZW5jZSB3ZWKSARppbnRlcm5ldF9tYXJrZXRpbmdfc2VydmljZZoBRENpOURRVWxSUVVOdlpFTm9kSGxqUmpsdlQyMVJlRlZXYkVwalIyeHRUVmh3VkZJeVNqSllNVUpzWlcxb1NHTlZSUkFC4AEA-gEECAAQMw!16s%2Fg%2F11zjj22r9s?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D",
+        "Has Real Website": "No"
+    },
+    {
+        "Name": "Design web freelance",
+        "Address": " Tassala El Merdja",
+        "Phone": "N/A",
+        "Email": "N/A",
+        "Rating": "4.8",
+        "Reviews": "4",
+        "Comments": [],
+        "Website": "https://www.facebook.com/Multimedia.ALG",
+        "Google Maps Link": "https://www.google.com/maps/place/Design+web+freelance/@36.7164193,2.5612843,11z/data=!4m10!1m2!2m1!1sAgence+Web!3m6!1s0x128fa915b67ade93:0x1364b99408fc0b11!8m2!3d36.6281017!4d2.9461927!15sCgpBZ2VuY2UgV2VikgENZGVzaWduX2FnZW5jeeABAA!16s%2Fg%2F11t255sg61?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D",
+        "Has Real Website": "No"
+    },
+    {
+        "Name": "A3+ Agence de Communication & Publicité",
+        "Address": " Pins Maritime, cité les Mandarines N°7bis1, Mohammadia 16058",
+        "Phone": " 0542 13 91 98",
+        "Email": "N/A",
+        "Rating": "4.8",
+        "Reviews": "4",
+        "Comments": [
+            "J’ai récemment fait appel à cette agence pour des affiches plastifiées, et malheureusement, mon expérience a été assez frustrante. Bien que le travail final ait été bien réalisé, le processus pour y arriver a été long et pénible. …",
+            "Communication lamentable et service médiocre! Ils ne répondent jamais au téléphone, même quand c'est important. Comment pouvez-vous préparer la commande de quelqu'un (comme des cartes de visite) et ne pas …",
+            "Service rapide et professionnel ! Flyers de très bonne qualité livrés en un temps record. Je recommande vivement ! 🙏 …"
+        ],
+        "Website": "https://web.facebook.com/A3plus.graphic",
+        "Google Maps Link": "https://www.google.com/maps/place/A3%2B+Agence+de+Communication+%26+Publicit%C3%A9/@36.7336616,2.8823783,11z/data=!4m10!1m2!2m1!1sAgence+Web!3m6!1s0x128e53c6dbd65a21:0x561d1309dc5130f4!8m2!3d36.7336616!4d3.1707694!15sCgpBZ2VuY2UgV2ViWgwiCmFnZW5jZSB3ZWKSARJhZHZlcnRpc2luZ19hZ2VuY3maAURDaTlEUVVsUlFVTnZaRU5vZEhsalJqbHZUMjB3TTFFeVZrbFpNMEV6VFZoU05sVnVaRVpUYkd3MFpGaHdiMHhZWXhBQuABAPoBBAgAECE!16s%2Fg%2F11n00cbw_m?entry=ttu&g_ep=EgoyMDI2MDUyNy4wIKXMDSoASAFQAw%3D%3D",
+        "Has Real Website": "No"
     }
 ]

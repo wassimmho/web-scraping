@@ -281,15 +281,21 @@ async def scrape_google_maps(config=None, p_manager=None):
                     elif await website_fallback.count() > 0:
                         website = await website_fallback.first.get_attribute("href")
 
-                    # Filter: Check if it's a real website or just social media
+                    # Filter: Check if it's a real website or just social media/directory
                     if website != "N/A":
-                        social_media = [
-                            "facebook.com", "instagram.com", "t.me", "twitter.com", 
+                        non_independent_patterns = [
+                            "facebook.com", "instagram.com", "t.me", "twitter.com", "x.com",
                             "linkedin.com", "linktr.ee", "youtube.com", "tiktok.com", 
-                            "pinterest.com", "yelp.com", "wa.me"
+                            "pinterest.com", "yelp.com", "wa.me", "vimeo.com", "dailymotion.com",
+                            "business.site", "negocio.site", "google.com", "google.fr",
+                            "pagesjaunes.fr", "societe.com", "kompass.com", "mappy.com",
+                            "manta.com", "zoominfo.com", "bark.com", "prontopro.fr",
+                            "tripadvisor.", "booking.com", "hotels.com", "expedia.",
+                            "yellowpages.", "zyro.com", "wixsite.com", "wordpress.com",
+                            "sitew.fr", "jimdosite.com", "strikingly.com"
                         ]
-                        # If it doesn't contain social media domains, it's a "Pure Website"
-                        if not any(sm in website.lower() for sm in social_media):
+                        # If it doesn't contain social media patterns, it's a "Pure Website"
+                        if not any(pattern in website.lower() for pattern in non_independent_patterns):
                             is_pure_website = True
                     
                     address = "N/A"
@@ -370,9 +376,9 @@ async def scrape_google_maps(config=None, p_manager=None):
                     if not is_pure_website:
                         results.append(data)
                         status = "Lead (Social Only)" if website != "N/A" else "Lead (No Website)"
-                        print(f"[{len(results)}] {status}: {name}")
+                        print(f"[{len(results)}] {status}: {name} ({website})")
                     else:
-                        print(f"Skipping {name} (Has 100% real website)")
+                        print(f"Skipping {name} (Real Website: {website})")
 
                 except Exception as e:
                     print(f"Error processing item: {e}")
