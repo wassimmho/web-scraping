@@ -43,11 +43,17 @@ def start_scrape():
     cities = data.get("cities", [data.get("city", "Paris")])
     visual_mode = data.get("visual_mode", False)
     max_scrolls = data.get("max_scrolls", 15)
+    lat = data.get("lat")
+    lng = data.get("lng")
+    radius = data.get("radius")
     
     config = {
         "business_type": business_type,
         "visual_mode": visual_mode,
         "max_scrolls": max_scrolls,
+        "lat": lat,
+        "lng": lng,
+        "radius": radius,
         "search_queries": [f"{business_type} in {city}" for city in cities] if not visual_mode else []
     }
 

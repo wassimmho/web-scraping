@@ -1,0 +1,93 @@
+              {logs.slice(-5).map((log, i) => <div key={i} className="log-line">{log}</div>)}
+            </div>
+          </div>
+        )}
+      </aside>
+
+      <main className="main-content">
+        {activeTab === 'search' ? (
+          <>
+            <header className="main-header">
+              <div className="search-bar">
+                <input 
+                  type="text" 
+                  placeholder="Manual Search (Name/Address)..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <div className="main-stats">
+                Current View: <strong>{filteredLeads.length}</strong> matches
+              </div>
+            </header>
+
+            <div className="map-container-wrapper">
+              <MapContainer center={mapCenter} zoom={13} style={{ height: '400px', width: '100%', borderRadius: '12px' }}>
+                <TileLayer
+                  url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png"
+                  attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
+                />
+                <Circle 
+                  center={mapCenter} 
+                  radius={radius} 
+                  pathOptions={{ fillColor: '#22c55e', color: '#22c55e', fillOpacity: 0.1 }}
+                />
+                <DraggableMarker />
+              </MapContainer>
+            </div>
+            
+            <section className="extraction-logs-preview">
+               <h3>Live Progress</h3>
+               <div className="mini-logs">
+                  {logs.slice(-3).map((log, i) => <div key={i} className="log-line">{log}</div>)}
+               </div>
+            </section>
+          </>
+        ) : (
+          <section className="leads-display">
+            <div className="leads-display-header">
+              <h2>Database results</h2>
+              <div className="view-controls">
+                {searchHistory.length > 0 && (
+                  <select 
+                    className="history-filter"
+                    value={activeSearchFilter}
+                    onChange={e => setActiveSearchFilter(e.target.value)}
+                  >
+                    <option value="All">All Search Sessions</option>
+                    {searchHistory.map(q => <option key={q} value={q}>{q}</option>)}
+                  </select>
+                )}
+                <select value={viewMode} onChange={e => setViewMode(e.target.value)} className="view-select">
+                  <option value="grid">Grid View</option>
+                  <option value="grouped">Group by Search</option>
+                </select>
+              </div>
+            </div>
+
+            {viewMode === 'grid' ? (
+              <div className="leads-grid">
+                {filteredLeads.map((lead, index) => (
+                  <LeadCard key={index} lead={lead} />
+                ))}
+              </div>
+            ) : (
+              <div className="leads-grouped">
+                {Object.keys(groupedLeads).map(query => (
+                  <section key={query} className="search-group">
+                    <h3 className="group-title">{query} <span className="count">({groupedLeads[query].length})</span></h3>
+                    <div className="leads-grid">
+                      {groupedLeads[query].map((lead, index) => (
+                        <LeadCard key={index} lead={lead} />
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </main>
+    </div>
+  );
+}

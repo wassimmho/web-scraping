@@ -1,32 +1,3 @@
-import { useState, useEffect, useMemo, useRef } from 'react'
-import { MapContainer, TileLayer, Circle, Marker, useMapEvents } from 'react-leaflet'
-import L from 'leaflet'
-import 'leaflet/dist/leaflet.css'
-import leadsDataFull from './leads.json'
-import './App.css'
-
-// Fix Leaflet marker icon issue
-import markerIcon2x from 'leaflet/dist/images/marker-icon-2x.png';
-import markerIcon from 'leaflet/dist/images/marker-icon.png';
-import markerShadow from 'leaflet/dist/images/marker-shadow.png';
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: markerIcon2x,
-    iconUrl: markerIcon,
-    shadowUrl: markerShadow,
-});
-
-// Custom Modern Marker
-const modernIcon = new L.DivIcon({
-  className: 'custom-div-icon',
-  html: `<div style="background-color: #2563eb; width: 14px; height: 14px; border: 3px solid white; border-radius: 50%; box-shadow: 0 0 15px rgba(37, 99, 235, 0.5);"></div>`,
-  iconSize: [20, 20],
-  iconAnchor: [10, 10]
-});
-
-function App() {
-  const [leadsData, setLeadsData] = useState([])
   const [searchTerm, setSearchTerm] = useState('')
   const [filterSocial, setFilterSocial] = useState(false)
   const [filterNoWebsite, setFilterNoWebsite] = useState(false)
@@ -85,7 +56,7 @@ function App() {
   const [newCity, setNewCity] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('Agence Web')
   const [selectedCities, setSelectedCities] = useState([])
-  const [visualMode, setVisualMode] = useState(true)
+  const [visualMode, setVisualMode] = useState(false)
   const [maxScrolls, setMaxScrolls] = useState(15)
   const [searchHistory, setSearchHistory] = useState([])
   const [activeSearchFilter, setActiveSearchFilter] = useState('All')
@@ -175,7 +146,7 @@ function App() {
         body: JSON.stringify({
           business_type: selectedCategory,
           cities: selectedCities,
-          visual_mode: visualMode,
+          visual_mode: true, // Always use visual mode when map interaction is intended
           max_scrolls: maxScrolls,
           lat: mapCenter[0],
           lng: mapCenter[1],
@@ -212,9 +183,8 @@ function App() {
         draggable={true}
         eventHandlers={eventHandlers}
         position={mapCenter}
-        ref={markerRef}
-        icon={modernIcon}
-      />
+        ref={markerRef}>
+      </Marker>
     )
   }
 
@@ -321,11 +291,18 @@ function App() {
             Database
           </button>
         </div>
+        <div className="nav-search">
+          <input 
+            type="text" 
+            placeholder="Global search..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
+        </div>
       </nav>
 
       <div className="layout-body">
         <aside className="sidebar">
-
         <section className="sidebar-section">
           <h3>Business Type</h3>
           <select 
@@ -339,22 +316,20 @@ function App() {
           </select>
         </section>
 
-        {visualMode && (
-          <section className="sidebar-section">
-            <h3>Radius</h3>
-            <div className="radius-selector">
-              {[1000, 2000, 5000, 10000, 20000, 50000].map(r => (
-                <button 
-                  key={r}
-                  className={`radius-btn ${radius === r ? 'active' : ''}`}
-                  onClick={() => setRadius(r)}
-                >
-                  {r/1000}km
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
+        <section className="sidebar-section">
+          <h3>Radius</h3>
+          <div className="radius-selector">
+            {[1000, 2000, 5000, 10000, 20000, 50000].map(r => (
+              <button 
+                key={r}
+                className={`radius-btn ${radius === r ? 'active' : ''}`}
+                onClick={() => setRadius(r)}
+              >
+                {r/1000}km
+              </button>
+            ))}
+          </div>
+        </section>
 
         <section className="sidebar-section">
           <h3>Gap Filters</h3>
@@ -386,22 +361,20 @@ function App() {
           </div>
         </section>
 
-        {!visualMode && (
-          <section className="sidebar-section">
-            <h3>Target Cities</h3>
-            <div className="city-selector side">
-              {availableCities.slice(0, 8).map(city => (
-                <button 
-                  key={city}
-                  className={`city-pill mini ${selectedCities.includes(city) ? 'active' : ''}`}
-                  onClick={() => toggleCity(city)}
-                >
-                  {city}
-                </button>
-              ))}
-            </div>
-          </section>
-        )}
+        <section className="sidebar-section">
+          <h3>Targets Cities</h3>
+          <div className="city-selector side">
+            {availableCities.slice(0, 8).map(city => (
+              <button 
+                key={city}
+                className={`city-pill mini ${selectedCities.includes(city) ? 'active' : ''}`}
+                onClick={() => toggleCity(city)}
+              >
+                {city}
+              </button>
+            ))}
+          </div>
+        </section>
 
         <div className="sidebar-actions">
           <button 
@@ -424,209 +397,3 @@ function App() {
               {scrapingStatus.replace(/_/g, ' ')}
             </div>
             <div className="mini-logs">
-              {logs.slice(-5).map((log, i) => <div key={i} className="log-line">{log}</div>)}
-            </div>
-          </div>
-        )}
-      </aside>
-
-      <main className="main-content">
-        {activeTab === 'search' ? (
-          <>
-            <header className="main-header">
-              <div className="method-toggle">
-                <button 
-                  className={`toggle-btn ${visualMode ? 'active' : ''}`}
-                  onClick={() => setVisualMode(true)}
-                >
-                  Map View
-                </button>
-                <button 
-                  className={`toggle-btn ${!visualMode ? 'active' : ''}`}
-                  onClick={() => setVisualMode(false)}
-                >
-                  City Mode
-                </button>
-              </div>
-
-              <div className="main-stats">
-                Current View: <strong>{filteredLeads.length}</strong> matches
-              </div>
-            </header>
-
-            {!visualMode ? (
-              <div className="city-search-panel">
-                <div className="panel-content">
-                  <h3>Target Cities</h3>
-                  <p>The scraper will search for <strong>{selectedCategory}</strong> in each of these locations.</p>
-                  
-                  <div className="cities-manage-box">
-                    <div className="chips-container">
-                      {selectedCities.length === 0 ? (
-                        <div className="no-cities">No cities selected yet</div>
-                      ) : (
-                        selectedCities.map(city => (
-                          <div key={city} className="city-chip">
-                            {city}
-                            <button className="remove-btn" onClick={() => toggleCity(city)}>×</button>
-                          </div>
-                        ))
-                      )}
-                    </div>
-                    
-                    <div className="add-city-box">
-                      <input 
-                        type="text" 
-                        placeholder="Add another city..." 
-                        value={newCity}
-                        onChange={(e) => setNewCity(e.target.value)}
-                        onKeyDown={addNewCity}
-                      />
-                    </div>
-                  </div>
-
-                  <div className="city-mode-hint">
-                    In City Mode, the scraper scans each city sequentially. Map coordinates are ignored.
-                  </div>
-                </div>
-              </div>
-            ) : (
-              <div className="map-container-wrapper">
-                <MapContainer center={mapCenter} zoom={13} style={{ height: '450px', width: '100%', borderRadius: '12px', border: '1px solid var(--border)' }}>
-                  <TileLayer
-                    url="https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>'
-                  />
-                  <Circle 
-                    center={mapCenter} 
-                    radius={radius} 
-                    pathOptions={{ fillColor: '#2563eb', color: '#2563eb', fillOpacity: 0.1, weight: 1 }}
-                  />
-                  <DraggableMarker />
-                </MapContainer>
-              </div>
-            )}
-            
-            <section className="extraction-logs-preview">
-               <h3>Live Progress</h3>
-               <div className="mini-logs">
-                  {logs.slice(-3).map((log, i) => <div key={i} className="log-line">{log}</div>)}
-               </div>
-            </section>
-          </>
-        ) : (
-          <section className="leads-display">
-            <div className="leads-display-header">
-              <div className="header-left">
-                <h2>Captured Leads</h2>
-                <div className="lead-counter">{filteredLeads.length} total results</div>
-              </div>
-              
-              <div className="result-filters-bar">
-                <div className="filter-group">
-                  <label>Session:</label>
-                  <select 
-                    value={activeSearchFilter}
-                    onChange={e => setActiveSearchFilter(e.target.value)}
-                  >
-                    <option value="All">All Sources</option>
-                    {searchHistory.map(q => <option key={q} value={q}>{q}</option>)}
-                  </select>
-                </div>
-
-                <div className="filter-group">
-                  <label>Type:</label>
-                  <select value={selectedCategory} onChange={e => setSelectedCategory(e.target.value)}>
-                    <option value="All">All Categories</option>
-                    {availableCategories.map(cat => <option key={cat} value={cat}>{cat}</option>)}
-                  </select>
-                </div>
-
-                <div className="quick-search">
-                  <input 
-                    type="text" 
-                    placeholder="Search name, phone or address..." 
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div className="leads-list">
-              <div className="list-header">
-                <div className="col-name">Business</div>
-                <div className="col-contact">Contact Details</div>
-                <div className="col-rating">Rating</div>
-                <div className="col-source">Source</div>
-                <div className="col-actions">Actions</div>
-              </div>
-              {filteredLeads.map((lead, index) => (
-                <LeadRow key={index} lead={lead} />
-              ))}
-              {filteredLeads.length === 0 && (
-                <div className="empty-state">
-                  No leads found matching your filters.
-                </div>
-              )}
-            </div>
-          </section>
-        )}
-      </main>
-    </div>
-    </div>
-  );
-}
-
-function LeadRow({ lead }) {
-  return (
-    <div className="lead-row">
-      <div className="col-component col-name">
-        <div className="primary-text">{lead.Name}</div>
-        <div className="secondary-text">{lead.Category || 'Business'}</div>
-      </div>
-
-      <div className="col-component col-contact">
-        <div className="address-text line-clamp">{lead.Address}</div>
-        <div className="contact-pills">
-          {lead.Phone && lead.Phone !== "N/A" && <span className="pill phone">{lead.Phone}</span>}
-          {lead.Email && lead.Email !== "N/A" && <span className="pill email">{lead.Email}</span>}
-          {lead._websiteType === 'none' && <span className="pill none">No Website</span>}
-        </div>
-      </div>
-
-      <div className="col-component col-rating">
-        <div className="rating-star">
-          <span className="rate-num">{lead.Rating !== "0" ? lead.Rating : '--'}</span>
-          <span className="rate-count">({lead.Reviews || 0})</span>
-        </div>
-      </div>
-
-      <div className="col-component col-source">
-        <div className="source-tag">{lead.SearchQuery || 'Direct'}</div>
-      </div>
-
-      <div className="col-actions">
-        {lead.Website && lead.Website !== "N/A" && (
-          <a href={lead.Website} target="_blank" rel="noreferrer" className="action-icn site" title="Website">
-            🌐
-          </a>
-        )}
-        <a 
-          href={lead["Google Maps Link"] || `https://www.google.com/maps/search/${encodeURIComponent(lead.Name + ' ' + lead.Address)}`} 
-          target="_blank" 
-          rel="noreferrer" 
-          className="action-icn map" 
-          title="Open in Maps"
-        >
-          📍
-        </a>
-      </div>
-    </div>
-  );
-}
-
-export default App;
-
-
-

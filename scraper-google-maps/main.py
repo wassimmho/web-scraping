@@ -123,8 +123,20 @@ async def scrape_google_maps(config=None, p_manager=None):
         seen_names = set()
 
         if visual_mode:
-            progress.log(">>> [Visual Mode] Browser opened. Zoom into your target area.")
-            await page.goto("https://www.google.com/maps")
+            progress.log(">>> [Visual Mode] Browser opened.")
+            
+            lat = config.get("lat")
+            lng = config.get("lng")
+            if lat and lng:
+                # Go to specific coordinates with a default zoom level (e.g. 15 for ~5km radius)
+                zoom = 14
+                if config.get("radius", 5000) < 2000: zoom = 16
+                elif config.get("radius", 5000) > 10000: zoom = 12
+                
+                progress.log(f"Centering map on {lat}, {lng} (Zoom: {zoom})")
+                await page.goto(f"https://www.google.com/maps/@{lat},{lng},{zoom}z")
+            else:
+                await page.goto("https://www.google.com/maps")
             
             # Consent
             try:
@@ -251,49 +263,6 @@ async def scrape_google_maps(config=None, p_manager=None):
                     # with price labels that also use 'fontHeadlineSmall'
                     name_loc = card.locator('.qBF1Pd.fontHeadlineSmall')
                     if await name_loc.count() == 0:
-                        continue
-                    
-                    name = await name_loc.first.inner_text()
-                    if name in seen_names:
-                        continue
-                    seen_names.add(name)
-
-                    # Extract basic data... (simulated here for clarity)
-                    # Let's add Search Metadata
-                    results.append({
-                        "Name": name,
-                        "SearchQuery": search_query,
-                        "Category": business_type,
-                        "Timestamp": search_timestamp,
-                        "Rating": "N/A", # Will be updated if specific locators match
-                        "Reviews": "N/A",
-                        "Address": "N/A",
-                        "Phone": "N/A",
-                        "Website": "N/A",
-                        "Google Maps Link": f"https://www.google.com/maps/search/{name.replace(' ', '+')}",
-                        "Has Real Website": "No"
-                    })
-                except Exception as e:
-                    print(f"Error parsing card: {e}")
-            
-        # Update leads.json safely
-        # Note: In a real app, you'd append or merge.
-        existing_data = []
-        if os.path.exists("leads.json"):
-            try:
-                with open("leads.json", "r", encoding="utf-8") as f:
-                    existing_data = json.load(f)
-            except: pass
-        
-        # Merge new results at the beginning
-        final_data = results + existing_data
-        with open("leads.json", "w", encoding="utf-8") as f:
-            json.dump(final_data, f, indent=4, ensure_ascii=False)
-            
-        progress.status = "finished"
-        progress.log(f"Extraction complete! Found {len(results)} new leads.")
-        
-    return results
                         # Fallback to general but check count to avoid strict error
                         name_loc = card.locator('.fontHeadlineSmall')
                         if await name_loc.count() > 1:
